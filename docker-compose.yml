@@ -1,0 +1,11 @@
+
+version: '3.8'
+
+services:
+    buffalo:
+      build:
+        context: .
+        dockerfile: ./.compose/buffalo/dockerfile
+      command: sh /execute.sh
+      volumes:
+        - ./buffalo:/app
