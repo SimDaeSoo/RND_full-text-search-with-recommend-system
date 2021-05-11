@@ -19,7 +19,6 @@ def example1():
     data_option.input.main = './datas/main'
     data_option.input.iid = './datas/iid'
 
-    print(als_option, data_option)
     als = ALS(als_option, data_opt=data_option)
     als.initialize()
     als.train()
