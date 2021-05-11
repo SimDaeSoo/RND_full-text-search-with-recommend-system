@@ -5,9 +5,10 @@ import time
 import fire
 
 from buffalo.algo.als import ALS
+from buffalo.algo.bpr import BPRMF
 from buffalo.misc import aux, log
 from buffalo.parallel.base import ParALS
-from buffalo.algo.options import ALSOption
+from buffalo.algo.options import ALSOption, BPRMFOption
 from buffalo.data.mm import MatrixMarketOptions
 
 
@@ -16,8 +17,8 @@ def example1():
     als_option = ALSOption().get_default_option()
     als_option.validation = aux.Option({'topk': 10})
     data_option = MatrixMarketOptions().get_default_option()
-    data_option.input.main = './datas/main'
-    data_option.input.iid = './datas/iid'
+    data_option.input.main = './datas/als/main'
+    data_option.input.iid = './datas/als/iid'
 
     als = ALS(als_option, data_opt=data_option)
     als.initialize()
@@ -66,8 +67,8 @@ def example2():
     log.set_log_level(log.INFO)
     als_option = ALSOption().get_default_option()
     data_option = MatrixMarketOptions().get_default_option()
-    data_option.input.main = './datas/main'
-    data_option.input.iid = './datas/iid'
+    data_option.input.main = './datas/als/main'
+    data_option.input.iid = './datas/als/iid'
     data_option.data.path = './ml20m.h5py'
     data_option.data.use_cache = True
 
@@ -107,7 +108,24 @@ def example2():
                 fout.write('%s\t%s\n' % (q, '\t'.join(p)))
     print('took: %.3f secs' % (time.time() - start_t))
 
+def example3():
+    # Default 로 하고, 5점인 데이터만 1로 세팅한 후 유사 컨텐츠 검색 -> 검증 어떻게 하는가? Params들은 어떻게 optimization해야하지?
+    bprmf_option = BPRMFOption().get_default_option()
+    bprmf_option.validation = aux.Option({'topk': 10})
+
+    data_option = MatrixMarketOptions().get_default_option()
+    data_option.input.main = './datas/bprmf/main'
+    data_option.input.iid = './datas/bprmf/iid'
+
+    bprmf = BPRMF(bprmf_option, data_opt=data_option)
+    bprmf.initialize()
+
+    print('Similar movies to Star_Wars_(1977)')
+    for rank, (movie_name, score) in enumerate(bprmf.most_similar('49.Star_Wars_(1977)')):
+        print(f'{rank + 1:02d}. {score:.3f} {movie_name}')
+
 if __name__ == '__main__':
     fire.Fire({'example1': example1,
-               'example2': example2})
+               'example2': example2,
+               'example3': example3})
                
