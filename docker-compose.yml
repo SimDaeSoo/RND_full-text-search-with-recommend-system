@@ -7,5 +7,7 @@ services:
         context: .
         dockerfile: ./.compose/buffalo/dockerfile
       command: sh /execute.sh
+      environment: 
+        - LC_ALL=C.UTF-8
       volumes:
         - ./buffalo:/app
